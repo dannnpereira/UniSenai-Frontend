@@ -1,0 +1,63 @@
+<main class="pagina">
+  <section class="calculadora">
+    <h1>Calculadora</h1>
+
+    <div class="visor" aria-live="polite">
+      {{ display }}
+    </div>
+
+    <div class="botoes">
+      <button type="button" class="botao botao-funcao" (click)="limpar()">
+        AC
+      </button>
+
+      <button type="button" class="botao botao-funcao" (click)="apagarUltimo()">
+        ⌫
+      </button>
+
+      <button type="button" class="botao botao-funcao" (click)="trocarSinal()">
+        +/-
+      </button>
+
+      <button type="button" class="botao botao-operador" (click)="selecionarOperador('/')">
+        ÷
+      </button>
+
+      <button type="button" class="botao" (click)="digitar('7')">7</button>
+      <button type="button" class="botao" (click)="digitar('8')">8</button>
+      <button type="button" class="botao" (click)="digitar('9')">9</button>
+
+      <button type="button" class="botao botao-operador" (click)="selecionarOperador('*')">
+        ×
+      </button>
+
+      <button type="button" class="botao" (click)="digitar('4')">4</button>
+      <button type="button" class="botao" (click)="digitar('5')">5</button>
+      <button type="button" class="botao" (click)="digitar('6')">6</button>
+
+      <button type="button" class="botao botao-operador" (click)="selecionarOperador('-')">
+        −
+      </button>
+
+      <button type="button" class="botao" (click)="digitar('1')">1</button>
+      <button type="button" class="botao" (click)="digitar('2')">2</button>
+      <button type="button" class="botao" (click)="digitar('3')">3</button>
+
+      <button type="button" class="botao botao-operador" (click)="selecionarOperador('+')">
+        +
+      </button>
+
+      <button type="button" class="botao botao-zero" (click)="digitar('0')">
+        0
+      </button>
+
+      <button type="button" class="botao" (click)="digitar('.')">
+        .
+      </button>
+
+      <button type="button" class="botao botao-igual" (click)="calcular()">
+        =
+      </button>
+    </div>
+  </section>
+</main>
