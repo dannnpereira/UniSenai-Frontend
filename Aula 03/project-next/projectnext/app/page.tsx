@@ -1,69 +1,246 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
 
 export default function Home() {
+  const [display, setDisplay] = useState('0');
+  const [valorAnterior, setValorAnterior] = useState<number | null>(null);
+  const [operador, setOperador] = useState<string | null>(null);
+  const [novoValor, setNovoValor] = useState(false);
+
+  function digitar(valor: string): void {
+    if (display === 'Erro' || novoValor) {
+      setDisplay(valor === '.' ? '0.' : valor);
+      setNovoValor(false);
+      return;
+    }
+
+    if (valor === '.' && display.includes('.')) {
+      return;
+    }
+
+    if (display === '0' && valor !== '.') {
+      setDisplay(valor);
+    } else {
+      setDisplay(display + valor);
+    }
+  }
+
+  function calcularResultado(
+    a: number,
+    b: number,
+    op: string
+  ): number | null {
+    let resultado: number;
+
+    switch (op) {
+      case '+':
+        resultado = a + b;
+        break;
+
+      case '-':
+        resultado = a - b;
+        break;
+
+      case '*':
+        resultado = a * b;
+        break;
+
+      case '/':
+        if (b === 0) {
+          return null;
+        }
+
+        resultado = a / b;
+        break;
+
+      default:
+        return b;
+    }
+
+    return Number.isFinite(resultado) ? resultado : null;
+  }
+
+  function selecionarOperador(op: string): void {
+    const valor = Number(display);
+
+    if (!Number.isFinite(valor)) {
+      return;
+    }
+
+    if (operador !== null && !novoValor) {
+      const resultado = calcularResultado(
+        valorAnterior!,
+        valor,
+        operador
+      );
+
+      if (resultado === null) {
+        setDisplay('Erro');
+        setValorAnterior(null);
+        setOperador(null);
+        setNovoValor(true);
+        return;
+      }
+
+      setDisplay(String(resultado));
+      setValorAnterior(resultado);
+    } else {
+      setValorAnterior(valor);
+    }
+
+    setOperador(op);
+    setNovoValor(true);
+  }
+
+  function calcular(): void {
+    if (operador === null || valorAnterior === null) {
+      return;
+    }
+
+    const resultado = calcularResultado(
+      valorAnterior,
+      Number(display),
+      operador
+    );
+
+    if (resultado === null) {
+      setDisplay('Erro');
+    } else {
+      setDisplay(String(Number(resultado.toPrecision(10))));
+    }
+
+    setValorAnterior(null);
+    setOperador(null);
+    setNovoValor(true);
+  }
+
+  function limpar(): void {
+    setDisplay('0');
+    setValorAnterior(null);
+    setOperador(null);
+    setNovoValor(false);
+  }
+
+  function apagarUltimo(): void {
+    if (novoValor || display === 'Erro') {
+      setDisplay('0');
+      setNovoValor(false);
+      return;
+    }
+
+    if (display.length <= 1) {
+      setDisplay('0');
+    } else {
+      setDisplay(display.slice(0, -1));
+    }
+  }
+
+  function trocarSinal(): void {
+    if (display === '0' || display === 'Erro') {
+      return;
+    }
+
+    setDisplay(String(Number(display) * -1));
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="pagina">
+      <section className="calculadora">
+        <h1>Calculadora</h1>
+
+        <div className="visor" aria-live="polite">
+          {display}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        <div className="botoes">
+          <button
+            type="button"
+            className="botao botao-funcao"
+            onClick={limpar}
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            AC
+          </button>
+
+          <button
+            type="button"
+            className="botao botao-funcao"
+            onClick={apagarUltimo}
           >
-            Documentation
-          </a>
+            ⌫
+          </button>
+
+          <button
+            type="button"
+            className="botao botao-funcao"
+            onClick={trocarSinal}
+          >
+            +/-
+          </button>
+
+          <button
+            type="button"
+            className="botao botao-operador"
+            onClick={() => selecionarOperador('/')}
+          >
+            ÷
+          </button>
+
+          <button type="button" className="botao" onClick={() => digitar('7')}>7</button>
+          <button type="button" className="botao" onClick={() => digitar('8')}>8</button>
+          <button type="button" className="botao" onClick={() => digitar('9')}>9</button>
+
+          <button
+            type="button"
+            className="botao botao-operador"
+            onClick={() => selecionarOperador('*')}
+          >
+            ×
+          </button>
+
+          <button type="button" className="botao" onClick={() => digitar('4')}>4</button>
+          <button type="button" className="botao" onClick={() => digitar('5')}>5</button>
+          <button type="button" className="botao" onClick={() => digitar('6')}>6</button>
+
+          <button
+            type="button"
+            className="botao botao-operador"
+            onClick={() => selecionarOperador('-')}
+          >
+            −
+          </button>
+
+          <button type="button" className="botao" onClick={() => digitar('1')}>1</button>
+          <button type="button" className="botao" onClick={() => digitar('2')}>2</button>
+          <button type="button" className="botao" onClick={() => digitar('3')}>3</button>
+
+          <button
+            type="button"
+            className="botao botao-operador"
+            onClick={() => selecionarOperador('+')}
+          >
+            +
+          </button>
+
+          <button
+            type="button"
+            className="botao botao-zero"
+            onClick={() => digitar('0')}
+          >
+            0
+          </button>
+
+          <button type="button" className="botao" onClick={() => digitar('.')}>.</button>
+
+          <button
+            type="button"
+            className="botao botao-igual"
+            onClick={calcular}
+          >
+            =
+          </button>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
