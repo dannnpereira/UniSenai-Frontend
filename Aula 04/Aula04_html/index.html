@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Data e Hora da API</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+
+            background: linear-gradient(135deg, #007bff, #6610f2);
+        }
+
+        .container {
+            width: 400px;
+            padding: 40px;
+
+            text-align: center;
+
+            background-color: white;
+            border-radius: 20px;
+
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        #date {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+
+            margin-bottom: 20px;
+        }
+
+        #status {
+            padding: 12px;
+
+            color: #155724;
+            background-color: #d4edda;
+
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+        }
+
+        #erro {
+            margin-top: 20px;
+            color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Data e Hora</h1>
+
+        <div id="date">
+            Carregando...
+        </div>
+
+        <div id="status">
+            Conectando com a API...
+        </div>
+
+        <div id="erro"></div>
+
+    </div>
+
+    <script>
+        // Endereço da sua API
+        const API_URL = "https://aula-04-ocs9.onrender.com";
+
+        // Função para consultar a API
+        async function buscarDataHora() {
+
+            try {
+
+                // Faz a requisição para a API
+                const resposta = await fetch(API_URL);
+
+                // Verifica se a requisição deu certo
+                if (!resposta.ok) {
+                    throw new Error("Erro ao acessar a API");
+                }
+
+                // Converte a resposta para JSON
+                const dados = await resposta.json();
+
+                console.log(dados);
+
+                // Mostra a data/hora na tela
+                document.getElementById("date").textContent = dados.date;
+
+                // Mostra o status da API
+                document.getElementById("status").textContent = dados.status;
+
+            } catch (erro) {
+
+                console.error(erro);
+
+                document.getElementById("date").textContent =
+                    "Erro ao carregar";
+
+                document.getElementById("status").textContent =
+                    "Não foi possível conectar à API.";
+
+                document.getElementById("erro").textContent =
+                    erro.message;
+            }
+        }
+
+        // Executa a função
+        buscarDataHora();
+    </script>
+
+</body>
+</html>
