@@ -8,7 +8,7 @@ function App() {
   const [editingId, setEditingId] = useState(null);
 
   // URL da API local do Express (Passo #7 e #9)[cite: 22, 30]
-  const API_URL = 'http://localhost:3000/api/notes';
+  const API_URL = 'https://unisenai-frontend-aula-05.onrender.com/';
 
   // Buscar todas as notas (GET) ao carregar a página[cite: 22]
   useEffect(() => {
