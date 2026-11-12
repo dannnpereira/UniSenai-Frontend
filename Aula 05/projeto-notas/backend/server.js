@@ -3,7 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const FILE = 'data.json';
 // Permite receber JSON
 app.use(bodyParser.json());
@@ -71,4 +71,7 @@ app.delete('/api/notes/:id', (req, res) => {
 // Inicia servidor
 app.listen(PORT, () => {
  console.log('Servidor rodando em http://localhost:3000');
+});
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
 });
